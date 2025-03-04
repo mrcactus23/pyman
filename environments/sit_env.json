@@ -1,0 +1,12 @@
+{
+    "id": "sit-env",
+    "name": "SIT",
+    "values": [
+      {
+        "key": "url",
+        "value": "https://www.google.com/",
+        "enabled": true
+      }
+    ]
+  }
+  
