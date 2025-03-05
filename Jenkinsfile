@@ -2,15 +2,15 @@ pipeline {
     agent any  // Run on any available agent
 
     stages {
-        // Step 1: Print "Welcome"
+        // Step 1: Intro
         stage('Welcome') {
             steps {
-                echo 'Welcome'
+                echo 'Welcome to APIM Automation'
             }
         }
 
-        // Step 2: Execute main.py
-        stage('Run Python Script') {
+        // Step 2: Execute hello.py
+        stage('Run Hello Python Script') {
             steps {
                 script {
                     // Ensure Python is installed
@@ -19,6 +19,15 @@ pipeline {
 
                     // Execute the Python script
                     sh 'python3 hello.py'
+                }
+            }
+        }
+
+        // Step 3: Execute api_test.py
+        stage('Run API Testing') {
+            steps {
+                script {
+                    sh 'python3 api_test.py'
                 }
             }
         }
