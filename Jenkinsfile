@@ -1,5 +1,5 @@
 pipeline {
-    agent any  // Run on any available agent
+    label 'node-agent'
 
     stages {
         // Step 1: Intro
