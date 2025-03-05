@@ -1,9 +1,7 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:16' // Use a specific Node.js version
-            args '-u root' // Run as root to avoid permission issues
-        }
+    agent any
+    tools {
+        nodejs 'newman' // Replace with the name of the Node.js installation in Jenkins
     }
 
     stages {
