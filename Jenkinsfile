@@ -1,5 +1,7 @@
 pipeline {
-    label 'node-agent'
+    agent {
+        label 'node-agent' // Replace with the label of the agent where Node.js is installed
+    }
 
     stages {
         // Step 1: Intro
