@@ -1,5 +1,10 @@
 pipeline {
-    agent any  // Run on any available agent
+    agent {
+        docker {
+            image 'node:16' // Use a specific Node.js version
+            args '-u root' // Run as root to avoid permission issues
+        }
+    }
 
     stages {
         // Step 1: Intro
@@ -20,6 +25,12 @@ pipeline {
                     // Execute the Python script
                     sh 'python3 hello.py'
                 }
+            }
+        }
+
+        stage('Check PATH') {
+            steps {
+                sh 'echo $PATH'
             }
         }
 
