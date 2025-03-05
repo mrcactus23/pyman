@@ -26,16 +26,10 @@ pipeline {
             }
         }
 
-        stage('Check PATH') {
-            steps {
-                sh 'echo $PATH'
-            }
-        }
-
         // Step 3: Install Newman
         stage('Run Newman') {
             steps {
-                sh 'npm install newman newman-reporter-html --save-dev'
+                sh 'npm install newman --save-dev'
                 sh 'newman -v'
             }
         }
