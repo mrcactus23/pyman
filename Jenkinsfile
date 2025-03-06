@@ -1,10 +1,16 @@
 pipeline {
     agent any
     tools {
-        nodejs 'newman' // Replace with the name of the Node.js installation in Jenkins
+        nodejs 'newman'
     }
+
+    // Read the config.json file and extract environment keys
+    environment {
+        CONFIG_FILE = 'config.json' 
+    }
+
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['sit', 'uat', 'production'], description: 'Select the environment')
+        choice(name: 'ENVIRONMENT', choices: getEnvironmentChoices(), description: 'Select the environment')
     }
 
     stages {
@@ -23,28 +29,21 @@ pipeline {
                     def pythonVersion = sh(script: 'python3 --version', returnStdout: true).trim()
                     echo "Using ${pythonVersion}"
 
-                    // Execute the Python script
-                    sh 'python3 hello.py'
+                    // Install newman
+                    sh 'npm install newman --save-dev'
+                    sh 'newman -v'
                 }
             }
         }
 
-        // Step 3: Install Newman
+        // Step 3: Deploy
         stage('Run Newman') {
             steps {
-                sh 'npm install newman --save-dev'
-                sh 'newman -v'
+                echo "Deploying to ${params.ENVIRONMENT} environment"
             }
         }
 
-        stage('Deploy') {
-            steps {
-                echo "Deploying to ${params.ENVIRONMENT} environment"
-                // Add your deployment logic here
-            }
-        }
-        
-        // Step 4: Execute api_test.py
+        // Step 4: Execution
         stage('Run API Testing') {
             steps {
                 script {
@@ -63,4 +62,16 @@ pipeline {
             echo 'Pipeline failed!'
         }
     }
+}
+
+// Function to read config.json and extract environment keys
+def getEnvironmentChoices() {
+    // Read the config.json file
+    def config = readJSON file: env.CONFIG_FILE
+
+    // Extract keys from the env_mapping section
+    def environments = config.env_mapping.keySet() as List
+
+    // Return the list of environments
+    return environments
 }
