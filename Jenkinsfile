@@ -3,6 +3,9 @@ pipeline {
     tools {
         nodejs 'newman' // Replace with the name of the Node.js installation in Jenkins
     }
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['sit', 'uat', 'production'], description: 'Select the environment')
+    }
 
     stages {
         // Step 1: Intro
@@ -31,6 +34,13 @@ pipeline {
             steps {
                 sh 'npm install newman --save-dev'
                 sh 'newman -v'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying to ${params.ENVIRONMENT} environment"
+                // Add your deployment logic here
             }
         }
         
