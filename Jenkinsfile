@@ -48,7 +48,7 @@ pipeline {
         stage('Run API Testing') {
             steps {
                 script {
-                    sh 'python3 api_test.py Sample'
+                   sh "python3 api_test.py Sample ${params.ENVIRONMENT}"
                 }
             }
         }
