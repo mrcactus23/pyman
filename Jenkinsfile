@@ -3,14 +3,8 @@ pipeline {
     tools {
         nodejs 'newman'
     }
-
-    // Read the config.json file and extract environment keys
-    environment {
-        CONFIG_FILE = 'config.json' 
-    }
-
     parameters {
-        choice(name: 'ENVIRONMENT', choices: getEnvironmentChoices(), description: 'Select the environment')
+        choice(name: 'ENVIRONMENT', choices: ['SIT', 'UAT', 'PRODUCTION'], description: 'Select the environment')
     }
 
     stages {
@@ -62,16 +56,4 @@ pipeline {
             echo 'Pipeline failed!'
         }
     }
-}
-
-// Function to read config.json and extract environment keys
-def getEnvironmentChoices() {
-    // Read the config.json file
-    def config = readJSON file: env.CONFIG_FILE
-
-    // Extract keys from the env_mapping section
-    def environments = config.env_mapping.keySet() as List
-
-    // Return the list of environments
-    return environments
 }
