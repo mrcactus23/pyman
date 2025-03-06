@@ -1,10 +1,12 @@
 {
     "collections": {
-      "Sample" : "collections/Sample/Sample API Regression.postman_collection.json"
-       
+      "Sample" : "collections/Sample/Sample API Regression.postman_collection.json",
+      "AF" : "collections/AF/Sample API Regression.postman_collection.json",
+      "PF" : "collections/pf/Sample API Regression.postman_collection.json"      
     },
     "env_mapping": {
-      "SIT": "environments/sit_env.json"
+      "SIT": "environments/sit_env.json",
+      "UAT": "environments/uat_env.json"
     }
-  }
+}
   
