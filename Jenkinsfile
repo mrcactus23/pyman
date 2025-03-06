@@ -5,18 +5,17 @@ pipeline {
     }
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['SIT', 'UAT', 'PRODUCTION'], description: 'Select the environment')
+        choice(name: 'ENDPOINT', choices: ['Sample', 'AF', 'PF'], description: 'Select the endpoint')
     }
 
     stages {
-        // Step 1: Intro
-        stage('Welcome') {
+        stage('Stage 1: Intro') {
             steps {
                 echo 'Welcome to APIM Automation'
             }
         }
 
-        // Step 2: Execute hello.py
-        stage('Run Hello Python Script') {
+        stage('Stage 2: Installation') {
             steps {
                 script {
                     // Ensure Python is installed
@@ -30,25 +29,22 @@ pipeline {
             }
         }
 
-        // Step 3: Deploy
-        stage('Run Newman') {
+        stage('Stage 3: Deployment') {
             steps {
-                echo "Deploying to ${params.ENVIRONMENT} environment"
+                echo "Deploying ${params.ENDPOINT} to ${params.ENVIRONMENT} environment"
             }
         }
 
-        // Step 4: Execution
-        stage('Run API Testing') {
+        stage('Stage 4: Test Execution') {
             steps {
                 script {
-                   sh "python3 api_test.py Sample ${params.ENVIRONMENT}"
+                   sh "python3 api_test.py ${params.ENDPOINT} ${params.ENVIRONMENT}"
                 }
             }
         }
     }
 
     post {
-        // Optional: Post-build actions
         success {
             echo 'Pipeline completed successfully!'
         }
