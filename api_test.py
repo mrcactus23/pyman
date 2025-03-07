@@ -39,15 +39,15 @@ def run_postman_test():
     print(f"📁 Saving JSON & HTML report in: {report_file} & {html_report_file}")
 
     newman_command = [
-    'newman', 'run', collection,
-    '-e', environment,
-    '--reporters', 'cli,json,htmlextra',
-    '--reporter-json-export', report_file,
-    '--reporter-htmlextra-export', html_report_file,
-    '--insecure'
+        'newman', 'run', collection,
+        '-e', environment,
+        '--reporters', 'cli,json,htmlextra',
+        '--reporter-json-export', report_file,
+        '--reporter-htmlextra-export', html_report_file,
+        '--insecure'
     ]
 
-    #Add --folder option if user provides a folder name
+    # Add --folder option if user provides a folder name
     if folder_choice:
         newman_command.extend(['--folder', folder_choice])
 
@@ -57,12 +57,13 @@ def run_postman_test():
             check=True
         )
         print(f"✅ Postman test completed successfully for {collection} specifically folder: {folder_choice}.\n✅ Report saved at {report_file} & {html_report_file}")
-
-        # Open the HTML report
         webbrowser.open('file://' + os.path.realpath(html_report_file))
+        return True
     except subprocess.CalledProcessError as e:
         print(f"❌ Error running Postman test for {collection}:", e)
+        return False
 
 # Run the script
 if __name__ == "__main__":
-    run_postman_test()
+    success = run_postman_test()
+    sys.exit(0 if success else 1)

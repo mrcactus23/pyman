@@ -42,6 +42,23 @@ pipeline {
                 }
             }
         }
+
+        stage('Stage 5: Jira Integration') {
+            steps {
+                script {
+                    def testSuccess = sh(script: 'python3 api_test.py ${params.ENDPOINT} ${params.ENVIRONMENT}', returnStatus: true) == 0
+                    def summary = "API Test ${testSuccess ? 'Success' : 'Failure'} in ${params.ENVIRONMENT} for ${params.ENDPOINT}"
+                    def description = "The API test automation ${testSuccess ? 'completed successfully' : 'failed'} in the ${params.ENVIRONMENT} environment for the ${params.ENDPOINT} endpoint."
+
+                    def issueKey = sh(script: "python3 jira_utils.py create '${summary}' '${description}'", returnStdout: true).trim()
+                    if (testSuccess) {
+                        sh "python3 jira_utils.py update ${issueKey} 'Done'"
+                    } else {
+                        sh "python3 jira_utils.py update ${issueKey} 'To Do'"
+                    }
+                }
+            }
+        }
     }
 
     post {
