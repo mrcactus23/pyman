@@ -6,6 +6,8 @@ pipeline {
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['SIT', 'UAT', 'PRODUCTION'], description: 'Select the environment')
         choice(name: 'ENDPOINT', choices: ['Sample', 'AF', 'PF'], description: 'Select the endpoint')
+        string(name: 'JIRA_SUMMARY', defaultValue: '', description: 'Custom Jira ticket summary')
+        string(name: 'JIRA_DESCRIPTION', defaultValue: '', description: 'Custom Jira ticket description')
     }
 
     stages {
@@ -25,6 +27,9 @@ pipeline {
                     // Install newman
                     sh 'npm install newman --save-dev'
                     sh 'newman -v'
+
+                    // Install Python dependencies
+                    sh 'pip3 install jira'
                 }
             }
         }
@@ -51,20 +56,22 @@ pipeline {
                 script {
                     // Use the stored test result from Stage 4
                     def testSuccess = env.TEST_SUCCESS.toBoolean()
-                    def summary = "API Test ${testSuccess ? 'Success' : 'Failure'} in ${params.ENVIRONMENT} for ${params.ENDPOINT}"
-                    def description = "The API test automation ${testSuccess ? 'completed successfully' : 'failed'} in the ${params.ENVIRONMENT} environment for the ${params.ENDPOINT} endpoint."
+
+                    // Define summary and description
+                    def summary = params.JIRA_SUMMARY ?: "API Test ${testSuccess ? 'Success' : 'Failure'} in ${params.ENVIRONMENT} for ${params.ENDPOINT}"
+                    def description = params.JIRA_DESCRIPTION ?: "The API test automation ${testSuccess ? 'completed successfully' : 'failed'} in the ${params.ENVIRONMENT} environment for the ${params.ENDPOINT} endpoint."
 
                     // Create a Jira ticket and capture the issue key
-                    echo 'Create a Jira ticket'
-                    // def issueKey = sh(script: "python3 jira_utils.py create_jira_ticket '${summary}' '${description}'", returnStdout: true).trim()
-                    def issueKey = sh(script: "python3 jira_utils.py create_jira_ticket('Test Summary', 'Test Description')", returnStdout: true).trim()
+                    echo 'Creating a Jira ticket...'
+                    def issueKey = sh(script: "python3 jira_utils.py create '${summary}' '${description}'", returnStdout: true).trim()
+                    echo "Created Jira ticket: ${issueKey}"
 
                     // Update the Jira ticket status based on the test result
-                    echo 'Update the Jira ticket'
+                    echo 'Updating the Jira ticket...'
                     if (testSuccess) {
-                        sh "python3 jira_utils.py update_jira_status ${issueKey} 'Done'"
+                        sh "python3 jira_utils.py update ${issueKey} 'Done'"
                     } else {
-                        sh "python3 jira_utils.py update_jira_status ${issueKey} 'To Do'"
+                        sh "python3 jira_utils.py update ${issueKey} 'To Do'"
                     }
                 }
             }

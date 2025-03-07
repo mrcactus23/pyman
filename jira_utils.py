@@ -1,57 +1,59 @@
-from jira import JIRA
-from jira.exceptions import JIRAError
-from requests import RequestException
+from jira_client import JiraClient
+import sys
 
-def create_jira_ticket(summary, description, issue_type='Task', project_key='PYM'):
-    try:
-        print(f"Attempting to create Jira ticket with summary: {summary}")
-        jira = JIRA('https://mrcactus23.atlassian.net', basic_auth=('najihahrohmat@gmail.com', 'ATATT3xFfGF0xwxa02H-pXfw03arms4CC9l4fQVJM3N-2Ej8WwQnAEpZDDb1yOtX-c9jrjqjKOE11wnMJqpET91kVmK6YdfqwywKxVe65bkvaq_CIX53U6gT_pj14feG919VYrWFdvjAs6NOQdQl_Xm4r7ydkDnqqm3YqLAoxGhJie5DiYwjBzU=002E89AB'))
-        print("Connected to Jira successfully!")
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python3 jira_utils.py <command> [args]")
+        print("Commands: create <summary> <description> | update <issue_key> <status>")
+        sys.exit(1)
 
-        print("Creating Jira ticket...")
-        new_issue = jira.create_issue(project=project_key,
-                              summary=summary,
-                              description=description,
-                              issuetype={'name': issue_type})
-        print(f"✅ Created Jira ticket: {new_issue.key}")
-        return new_issue.key 
-    except JIRAError as e:
-        print(f"❌ Error creating Jira ticket: {e}")
-        return None
-    except Exception as e:
-        print(f"❌ An unexpected error occurred: {e}")
-        return None
-    except RequestException as e:
-        print('Response from jira: ' + str(jira))
+    command = sys.argv[1]
 
-def update_jira_status(issue_key, status):
-    try:
-        print(f"Attempting to update Jira ticket {issue_key} to status: {status}")
-        jira = JIRA('https://mrcactus23.atlassian.net', basic_auth=('najihahrohmat@gmail.com', 'ATATT3xFfGF0xwxa02H-pXfw03arms4CC9l4fQVJM3N-2Ej8WwQnAEpZDDb1yOtX-c9jrjqjKOE11wnMJqpET91kVmK6YdfqwywKxVe65bkvaq_CIX53U6gT_pj14feG919VYrWFdvjAs6NOQdQl_Xm4r7ydkDnqqm3YqLAoxGhJie5DiYwjBzU=002E89AB'))
-        print("Connected to Jira successfully!")
+    # Jira credentials
+    server = 'https://mrcactus23.atlassian.net'
+    email = 'najihahrohmat@gmail.com'
+    api_token = 'ATATT3xFfGF0xwxa02H-pXfw03arms4CC9l4fQVJM3N-2Ej8WwQnAEpZDDb1yOtX-c9jrjqjKOE11wnMJqpET91kVmK6YdfqwywKxVe65bkvaq_CIX53U6gT_pj14feG919VYrWFdvjAs6NOQdQl_Xm4r7ydkDnqqm3YqLAoxGhJie5DiYwjBzU=002E89AB'
 
-        transitions = jira.transitions(issue_key)
-        print(f"Available transitions: {[t['name'] for t in transitions]}")
+    # Initialize Jira client
+    jira_client = JiraClient(server, email, api_token)
 
-        for transition in transitions:
-            if transition['name'] == status:
-                print(f"Transitioning issue {issue_key} to {status}...")
-                jira.transition_issue(issue_key, transition['id'])
-                print(f"✅ Updated Jira ticket {issue_key} to status: {status}")
-                break
-    except JIRAError as e:
-        print(f"❌ Error updating Jira ticket {issue_key}: {e}")
-    except Exception as e:
-        print(f"❌ An unexpected error occurred: {e}")
+    if command == 'create':
+        if len(sys.argv) < 4:
+            print("Usage: python3 jira_utils.py create <summary> <description>")
+            sys.exit(1)
 
-# # Add this to test the script when run directly
-# if __name__ == "__main__":
-#     print("Running jira_utils.py directly...")
-    
-#     # Test Jira connection
-#     if test_jira_connection():
-#         # Test creating a Jira ticket
-#         issue_key = create_jira_ticket("Test Summary", "Test Description")
-#         if issue_key:
-#             # Test updating the Jira ticket status
-#             update_jira_status(issue_key, "Done")
+        summary = sys.argv[2]
+        description = sys.argv[3]
+
+        # Test Jira connection
+        if jira_client.connect():
+            # Create a Jira ticket
+            issue_key = jira_client.create_issue(
+                project_key='PYM',
+                summary=summary,
+                description=description,
+                issue_type='Task'
+            )
+            if issue_key:
+                print(issue_key)  # Print the issue key for Jenkins to capture
+            else:
+                sys.exit(1)  # Exit with error if ticket creation fails
+
+    elif command == 'update':
+        if len(sys.argv) < 4:
+            print("Usage: python3 jira_utils.py update <issue_key> <status>")
+            sys.exit(1)
+
+        issue_key = sys.argv[2]
+        status = sys.argv[3]
+
+        # Test Jira connection
+        if jira_client.connect():
+            # Update the Jira ticket status
+            jira_client.update_issue_status(issue_key, status)
+    else:
+        print(f"Unknown command: {command}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
