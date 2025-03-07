@@ -8,20 +8,27 @@ pipeline {
         CONFIG_FILE = 'config.json' // Path to your config.json file
     }
 
-    // Use Active Choices for dynamic parameters
     parameters {
-        activeChoice(name: 'ENVIRONMENT', choiceType: 'PT_SINGLE_SELECT', script: {
-            // Read the config.json file and extract environment keys
+    activeChoice(name: 'ENVIRONMENT', choiceType: 'PT_SINGLE_SELECT', script: {
+        try {
             def config = readConfigFile()
-            return config.env_mapping.keySet() as List
-        }, description: 'Select the environment')
+            return config.env_mapping.keySet() as List ?: ['dev', 'staging', 'production'] // Default options
+        } catch (Exception e) {
+            echo "Error reading config file: ${e}"
+            return ['SIT', 'UAT', 'PRODUCTION'] // Default options
+        }
+    }, description: 'Select the environment')
 
-        activeChoice(name: 'ENDPOINT', choiceType: 'PT_SINGLE_SELECT', script: {
-            // Read the config.json file and extract endpoint keys
+    activeChoice(name: 'ENDPOINT', choiceType: 'PT_SINGLE_SELECT', script: {
+        try {
             def config = readConfigFile()
-            return config.collections.keySet() as List
-        }, description: 'Select the endpoint')
-    }
+            return config.collections.keySet() as List ?: ['Sample', 'AF', 'PF'] // Default options
+        } catch (Exception e) {
+            echo "Error reading config file: ${e}"
+            return ['Sample', 'AF', 'PF'] // Default options
+        }
+    }, description: 'Select the endpoint')
+}
 
     stages {
         stage('Stage 1: Intro') {
