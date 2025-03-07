@@ -38,7 +38,10 @@ pipeline {
         stage('Stage 4: Test Execution') {
             steps {
                 script {
-                    sh "python3 api_test.py ${params.ENDPOINT} ${params.ENVIRONMENT}"
+                    // Run the test and capture the result
+                    def testSuccess = sh(script: "python3 api_test.py ${params.ENDPOINT} ${params.ENVIRONMENT}", returnStatus: true) == 0
+                    // Store the result in an environment variable for use in later stages
+                    env.TEST_SUCCESS = testSuccess
                 }
             }
         }
@@ -46,11 +49,15 @@ pipeline {
         stage('Stage 5: Jira Integration') {
             steps {
                 script {
-                    def testSuccess = sh(script: "python3 api_test.py ${params.ENDPOINT} ${params.ENVIRONMENT}", returnStatus: true) == 0
+                    // Use the stored test result from Stage 4
+                    def testSuccess = env.TEST_SUCCESS.toBoolean()
                     def summary = "API Test ${testSuccess ? 'Success' : 'Failure'} in ${params.ENVIRONMENT} for ${params.ENDPOINT}"
                     def description = "The API test automation ${testSuccess ? 'completed successfully' : 'failed'} in the ${params.ENVIRONMENT} environment for the ${params.ENDPOINT} endpoint."
 
+                    // Create a Jira ticket
                     def issueKey = sh(script: "python3 jira_utils.py create '${summary}' '${description}'", returnStdout: true).trim()
+
+                    // Update the Jira ticket status based on the test result
                     if (testSuccess) {
                         sh "python3 jira_utils.py update ${issueKey} 'Done'"
                     } else {
