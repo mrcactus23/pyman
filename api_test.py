@@ -6,6 +6,9 @@ import webbrowser
 from config import COLLECTIONS, ENV_MAPPING
 
 def run_postman_test(collection_choice, env_choice, folder_choice=None):
+
+    print("run_postman_test", collection_choice, env_choice)
+    
     # Validate collection choice
     if collection_choice not in COLLECTIONS:
         print(f"❌ Invalid collection name! Choose from: {', '.join(COLLECTIONS.keys())}")
