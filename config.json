@@ -8,5 +8,11 @@
     "SIT": "environments/sit_env.json",
     "UAT": "environments/uat_env.json",
     "PRODUCTION": "environments/prod_env.json"
-  }
+  },
+  "jira_server": "https://mrcactus23.atlassian.net/jira/",
+  "jira_username": "mrcactus",
+  "jira_password": "Jiha@123456",
+  "jenkins_server": "http://localhost:8080/",
+  "jenkins_username": "admin",
+  "jenkins_password": "123456"
 }
