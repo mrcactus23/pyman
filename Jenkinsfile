@@ -23,12 +23,13 @@ pipeline {
                     def pythonVersion = sh(script: 'python3 --version', returnStdout: true).trim()
                     echo "Using ${pythonVersion}"
 
-                    // Install required Python packages
+                    // Install Newman globally
+                    sh 'npm install -g newman'
+                    sh 'newman -v'
+
+                    // Install Python dependencies
                     sh 'pip3 install -r requirements.txt'
                 }
-                // Install newman
-                sh 'npm install newman --save-dev'
-                sh 'newman -v'
             }
         }
 
@@ -41,6 +42,13 @@ pipeline {
         stage('Stage 4: Test Execution') {
             steps {
                 script {
+                    // Ensure reports directory is writable
+                    sh 'mkdir -p reports'
+                    sh 'chmod -R 777 reports'
+
+                    // Print current working directory
+                    sh 'pwd'
+
                     // Run the API tests
                     sh "python3 api_test.py ${params.ENDPOINT} ${params.ENVIRONMENT}"
                 }
