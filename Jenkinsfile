@@ -35,6 +35,17 @@ pipeline {
             }
         }
 
+        stage('Initialize Parameters') {
+            steps {
+                script {
+                    // Read the config.json file and populate parameters
+                    def config = readConfigFile()
+                    env.ENVIRONMENT_CHOICES = config.env_mapping.keySet().join('\n')
+                    env.ENDPOINT_CHOICES = config.collections.keySet().join('\n')
+                }
+            }
+        }
+
         stage('Stage 3: Deployment') {
             steps {
                 echo "Deploying ${params.ENDPOINT} to ${params.ENVIRONMENT} environment"
@@ -58,30 +69,6 @@ pipeline {
             echo 'Pipeline failed!'
         }
     }
-}
-
-// Function to read config.json and extract environment keys
-def getEnvironmentChoices() {
-    // Read the config.json file
-    def config = readConfigFile()
-
-    // Extract keys from the env_mapping section
-    def environments = config.env_mapping.keySet() as List
-
-    // Return the list of environments
-    return environments
-}
-
-// Function to read config.json and extract endpoint keys
-def getEndpointChoices() {
-    // Read the config.json file
-    def config = readConfigFile()
-
-    // Extract keys from the collections section
-    def endpoints = config.collections.keySet() as List
-
-    // Return the list of endpoints
-    return endpoints
 }
 
 // Function to read and parse the config.json file
