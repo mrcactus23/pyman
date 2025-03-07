@@ -10,8 +10,8 @@ pipeline {
 
     // Read the config.json file and populate parameters
     parameters {
-        choice(name: 'ENVIRONMENT', choices: getEnvironmentChoices(), description: 'Select the environment')
-        choice(name: 'ENDPOINT', choices: getEndpointChoices(), description: 'Select the endpoint')
+        choice(name: 'ENVIRONMENT', choices: [], description: 'Select the environment')
+        choice(name: 'ENDPOINT', choices: [], description: 'Select the endpoint')
     }
 
     stages {
