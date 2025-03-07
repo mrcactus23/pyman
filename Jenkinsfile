@@ -3,32 +3,11 @@ pipeline {
     tools {
         nodejs 'newman'
     }
-    // Define the path to the config.json file
-    environment {
-        CONFIG_FILE = 'config.json' // Path to your config.json file
-    }
 
     parameters {
-    activeChoice(name: 'ENVIRONMENT', choiceType: 'PT_SINGLE_SELECT', script: {
-        try {
-            def config = readConfigFile()
-            return config.env.keySet() as List ?: ['SIT', 'UAT', 'PRODUCTION'] // Default options
-        } catch (Exception e) {
-            echo "Error reading config file: ${e}"
-            return ['SIT', 'UAT', 'PRODUCTION'] // Default options
-        }
-    }, description: 'Select the environment')
-
-    activeChoice(name: 'ENDPOINT', choiceType: 'PT_SINGLE_SELECT', script: {
-        try {
-            def config = readConfigFile()
-            return config.collections.keySet() as List ?: ['Sample', 'AF', 'PF'] // Default options
-        } catch (Exception e) {
-            echo "Error reading config file: ${e}"
-            return ['Sample', 'AF', 'PF'] // Default options
-        }
-    }, description: 'Select the endpoint')
-}
+        choice(name: 'ENVIRONMENT', choices: ['Dev', 'SIT', 'UAT'], description: 'Select the environment')
+        choice(name: 'ENDPOINT', choices: ['Sample', 'AF', 'PF'], description: 'Select the endpoint')
+    }
 
     stages {
         stage('Stage 1: Intro') {
@@ -51,24 +30,13 @@ pipeline {
             }
         }
 
-        stage('Stage 3: Initialize Parameters') {
-            steps {
-                script {
-                    // Read the config.json file and populate parameters
-                    def config = readConfigFile()
-                    env.ENVIRONMENT_CHOICES = config.env.keySet().join('\n')
-                    env.ENDPOINT_CHOICES = config.collections.keySet().join('\n')
-                }
-            }
-        }
-
-        stage('Stage 4: Deployment') {
+        stage('Stage 3: Deployment') {
             steps {
                 echo "Deploying ${params.ENDPOINT} to ${params.ENVIRONMENT} environment"
             }
         }
 
-        stage('Stage 5: Test Execution') {
+        stage('Stage 4: Test Execution') {
             steps {
                 script {
                    sh "python3 api_test.py ${params.ENDPOINT} ${params.ENVIRONMENT}"
@@ -85,16 +53,4 @@ pipeline {
             echo 'Pipeline failed!'
         }
     }
-}
-
-// Function to read and parse the config.json file
-def readConfigFile() {
-    // Read the file content
-    def configText = readFile(env.CONFIG_FILE)
-
-    // Parse the JSON content using Groovy's JsonSlurper
-    def config = new groovy.json.JsonSlurper().parseText(configText)
-
-    // Return the parsed JSON object
-    return config
 }
