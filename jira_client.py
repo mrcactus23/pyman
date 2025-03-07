@@ -47,7 +47,12 @@ class JiraClient:
     def update_issue_status(self, issue_key, status):
         if not self.jira:
             print("❌ Not connected to Jira. Call connect() first.")
-            return
+            return None
+        
+        print ('self==>>', self)
+        print ('self.jira==>>', self.jira)
+        print ('issue_key==>>', issue_key)
+        print ('status==>>', status)
 
         try:
             print(f"Updating Jira ticket {issue_key} to status: {status}")
