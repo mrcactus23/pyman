@@ -1,6 +1,6 @@
 from jira import JIRA
 
-def create_jira_ticket(summary, description, issue_type='Task', project_key='BBY'):
+def create_jira_ticket(summary, description, issue_type='Task', project_key='PYM'):
     """
     Create a Jira ticket with the given summary, description, and issue type.
     :param summary: Summary of the Jira ticket
@@ -10,7 +10,7 @@ def create_jira_ticket(summary, description, issue_type='Task', project_key='BBY
     :return: Key of the created Jira ticket (e.g., 'AP-123')
     """
     jira = JIRA(
-        server='https://mrcactus23.atlassian.net/jira/',  # Replace with your Jira instance URL
+        server='https://mrcactus23.atlassian.net',  # Replace with your Jira instance URL
         basic_auth=('mrcactus', 'ATATT3xFfGF0AdRegy5SJNbQo22FYMBtFtlEeeDPqFKKsupS1yQpYhqH6xaHCNfLj1mJq-tw-PS5WcSnbZr2UtgDHLxMabZchr9bT9srYOdlO5__GKvXu4lbzAL8oprK3YccJm9NjPKtdO7PsZHJjgQo02XCLedGpUTrLXFSmNXa3Zn2m1G7vso=92118796')  # Replace with your Jira credentials
     )
 
@@ -32,7 +32,7 @@ def update_jira_status(issue_key, status):
     :param status: New status to set (e.g., 'To Do', 'In Progress', 'Done')
     """
     jira = JIRA(
-        server='https://mrcactus23.atlassian.net/jira/',  # Replace with your Jira instance URL
+        server='https://mrcactus23.atlassian.net',  # Replace with your Jira instance URL
         basic_auth=('mrcactus', 'ATATT3xFfGF0AdRegy5SJNbQo22FYMBtFtlEeeDPqFKKsupS1yQpYhqH6xaHCNfLj1mJq-tw-PS5WcSnbZr2UtgDHLxMabZchr9bT9srYOdlO5__GKvXu4lbzAL8oprK3YccJm9NjPKtdO7PsZHJjgQo02XCLedGpUTrLXFSmNXa3Zn2m1G7vso=92118796')  # Replace with your Jira credentials
     )
 
