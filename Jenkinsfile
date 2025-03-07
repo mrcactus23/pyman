@@ -54,10 +54,12 @@ pipeline {
                     def summary = "API Test ${testSuccess ? 'Success' : 'Failure'} in ${params.ENVIRONMENT} for ${params.ENDPOINT}"
                     def description = "The API test automation ${testSuccess ? 'completed successfully' : 'failed'} in the ${params.ENVIRONMENT} environment for the ${params.ENDPOINT} endpoint."
 
-                    // Create a Jira ticket
+                    // Create a Jira ticket and capture the issue key
+                    echo 'Create a Jira ticket'
                     def issueKey = sh(script: "python3 jira_utils.py create '${summary}' '${description}'", returnStdout: true).trim()
 
                     // Update the Jira ticket status based on the test result
+                    echo 'Update the Jira ticket'
                     if (testSuccess) {
                         sh "python3 jira_utils.py update ${issueKey} 'Done'"
                     } else {
