@@ -5,7 +5,7 @@ pipeline {
     }
 
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['Dev', 'SIT', 'UAT'], description: 'Select the environment')
+        choice(name: 'ENVIRONMENT', choices: ['SIT', 'UAT'], description: 'Select the environment')
         choice(name: 'ENDPOINT', choices: ['Sample', 'AF', 'PF'], description: 'Select the endpoint')
     }
 
