@@ -47,21 +47,21 @@ pipeline {
             }
         }
 
-        stage('Stage 5: Jira Integration') {
-            steps {
-                script {
-                    // Update Jira based on test results
-                    def testSuccess = sh(script: 'echo $?', returnStdout: true).trim() == '0'
-                    if (testSuccess) {
-                        echo '✅ Tests passed. Updating Jira...'
-                        sh "python3 jira_integration.py ${params.ENDPOINT} ${params.ENVIRONMENT}"
-                    /* groovylint-disable-next-line NestedBlockDepth */
-                    } else {
-                        echo '❌ Tests failed. Skipping Jira update.'
-                    }
-                }
-            }
-        }
+        // stage('Stage 5: Jira Integration') {
+        //     steps {
+        //         script {
+        //             // Update Jira based on test results
+        //             def testSuccess = sh(script: 'echo $?', returnStdout: true).trim() == '0'
+        //             if (testSuccess) {
+        //                 echo '✅ Tests passed. Updating Jira...'
+        //                 sh "python3 jira_integration.py ${params.ENDPOINT} ${params.ENVIRONMENT}"
+        //             /* groovylint-disable-next-line NestedBlockDepth */
+        //             } else {
+        //                 echo '❌ Tests failed. Skipping Jira update.'
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     post {
