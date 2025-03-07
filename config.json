@@ -7,7 +7,7 @@
     "env_mapping": {
       "SIT": "environments/sit_env.json",
       "UAT": "environments/uat_env.json",
-      "PRODUCTION": "environments/prod_env.json",
+      "PRODUCTION": "environments/prod_env.json"
     }
 }
   
