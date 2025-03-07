@@ -8,10 +8,19 @@ pipeline {
         CONFIG_FILE = 'config.json' // Path to your config.json file
     }
 
-    // Read the config.json file and populate parameters
+    // Use Active Choices for dynamic parameters
     parameters {
-        choice(name: 'ENVIRONMENT', choices: [], description: 'Select the environment')
-        choice(name: 'ENDPOINT', choices: [], description: 'Select the endpoint')
+        activeChoice(name: 'ENVIRONMENT', choiceType: 'PT_SINGLE_SELECT', script: {
+            // Read the config.json file and extract environment keys
+            def config = readConfigFile()
+            return config.env_mapping.keySet() as List
+        }, description: 'Select the environment')
+
+        activeChoice(name: 'ENDPOINT', choiceType: 'PT_SINGLE_SELECT', script: {
+            // Read the config.json file and extract endpoint keys
+            def config = readConfigFile()
+            return config.collections.keySet() as List
+        }, description: 'Select the endpoint')
     }
 
     stages {
@@ -35,7 +44,7 @@ pipeline {
             }
         }
 
-        stage('Initialize Parameters') {
+        stage('Stage 3: Initialize Parameters') {
             steps {
                 script {
                     // Read the config.json file and populate parameters
@@ -46,13 +55,13 @@ pipeline {
             }
         }
 
-        stage('Stage 3: Deployment') {
+        stage('Stage 4: Deployment') {
             steps {
                 echo "Deploying ${params.ENDPOINT} to ${params.ENVIRONMENT} environment"
             }
         }
 
-        stage('Stage 4: Test Execution') {
+        stage('Stage 5: Test Execution') {
             steps {
                 script {
                    sh "python3 api_test.py ${params.ENDPOINT} ${params.ENVIRONMENT}"
