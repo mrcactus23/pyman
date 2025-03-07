@@ -12,7 +12,7 @@ pipeline {
     activeChoice(name: 'ENVIRONMENT', choiceType: 'PT_SINGLE_SELECT', script: {
         try {
             def config = readConfigFile()
-            return config.env_mapping.keySet() as List ?: ['dev', 'staging', 'production'] // Default options
+            return config.env.keySet() as List ?: ['SIT', 'UAT', 'PRODUCTION'] // Default options
         } catch (Exception e) {
             echo "Error reading config file: ${e}"
             return ['SIT', 'UAT', 'PRODUCTION'] // Default options
@@ -56,7 +56,7 @@ pipeline {
                 script {
                     // Read the config.json file and populate parameters
                     def config = readConfigFile()
-                    env.ENVIRONMENT_CHOICES = config.env_mapping.keySet().join('\n')
+                    env.ENVIRONMENT_CHOICES = config.env.keySet().join('\n')
                     env.ENDPOINT_CHOICES = config.collections.keySet().join('\n')
                 }
             }
