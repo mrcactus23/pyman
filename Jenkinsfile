@@ -63,8 +63,13 @@ pipeline {
 
                     // Create a Jira ticket and capture the issue key
                     echo 'Creating a Jira ticket...'
-                    def issueKey = sh(script: "python3 jira_utils.py create '${summary}' '${description}' 2>&1", returnStdout: true).trim()
+                    def issueKey = sh(script: "python3 jira_utils.py create '${summary}' '${description}' 2>/dev/null", returnStdout: true).trim()
                     echo "!!!Created Jira ticket: ${issueKey}!!!"
+
+                    // Verify the issueKey is not empty
+                    if (issueKey == null || issueKey.isEmpty()) {
+                        error("Failed to create Jira ticket: issueKey is empty or null")
+                    }
 
                     // Update the Jira ticket status based on the test result
                     echo 'Updating the Jira ticket...'
@@ -73,9 +78,9 @@ pipeline {
                     } else {
                         sh "python3 jira_utils.py update ${issueKey} 'To Do'"
                     }
-                }
-            }
         }
+    }
+}
     }
 
     post {
