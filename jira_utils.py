@@ -3,8 +3,8 @@ import sys
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python3 jira_utils.py <command> [args]")
-        print("Commands: create <summary> <description> | update <issue_key> <status>")
+        print("Usage: python3 jira_utils.py <command> [args]", file=sys.stderr)
+        print("Commands: create <summary> <description> | update <issue_key> <status>", file=sys.stderr)
         sys.exit(1)
 
     command = sys.argv[1]
@@ -19,7 +19,7 @@ def main():
 
     if command == 'create':
         if len(sys.argv) < 4:
-            print("Usage: python3 jira_utils.py create <summary> <description>")
+            print("Usage: python3 jira_utils.py create <summary> <description>", file=sys.stderr)
             sys.exit(1)
 
         summary = sys.argv[2]
@@ -35,13 +35,13 @@ def main():
                 issue_type='Task'
             )
             if issue_key:
-                print(issue_key)  # Print the issue key for Jenkins to capture
+                print(issue_key)  # Print ONLY the issue key for Jenkins to capture
             else:
                 sys.exit(1)  # Exit with error if ticket creation fails
 
     elif command == 'update':
         if len(sys.argv) < 4:
-            print("Usage: python3 jira_utils.py update <issue_key> <status>")
+            print("Usage: python3 jira_utils.py update <issue_key> <status>", file=sys.stderr)
             sys.exit(1)
 
         issue_key = sys.argv[2]
@@ -52,7 +52,7 @@ def main():
             # Update the Jira ticket status
             jira_client.update_issue_status(issue_key, status)
     else:
-        print(f"Unknown command: {command}")
+        print(f"Unknown command: {command}", file=sys.stderr)
         sys.exit(1)
 
 if __name__ == "__main__":

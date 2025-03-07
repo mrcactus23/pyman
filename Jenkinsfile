@@ -63,7 +63,7 @@ pipeline {
 
                     // Create a Jira ticket and capture the issue key
                     echo 'Creating a Jira ticket...'
-                    def issueKey = sh(script: "python3 jira_utils.py create '${summary}' '${description}'", returnStdout: true).trim()
+                    def issueKey = sh(script: "python3 jira_utils.py create '${summary}' '${description}' 2>&1", returnStdout: true).trim()
                     echo "!!!Created Jira ticket: ${issueKey}!!!"
 
                     // Update the Jira ticket status based on the test result
