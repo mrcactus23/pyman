@@ -9,7 +9,7 @@ pipeline {
     }
 
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['SIT', 'UAT', 'DEV'], description: 'Select the environment'),
+        choice(name: 'ENVIRONMENT', choices: ['SIT', 'UAT', 'DEV'], description: 'Select the environment')
         choice(name: 'ENDPOINT', choices: ['Sample', 'AF', 'PF'], description: 'Select the environment')
     }
 
