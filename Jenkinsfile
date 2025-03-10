@@ -23,6 +23,7 @@ pipeline {
                     echo "Using ${pythonVersion}"
 
                     // Install newman
+                    sh 'npm -v'
                     sh 'npm install newman --save-dev'
                     sh 'newman -v'
                 }
